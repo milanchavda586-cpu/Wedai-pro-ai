@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEDAI PRO AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090909;color:#fff;font-family:Arial,sans-serif;padding:22px}
+h1{color:#d9b45b;text-align:center;letter-spacing:2px}
+p{text-align:center;color:#aaa}
+.panel{max-width:520px;margin:25px auto;background:#171717;border:1px solid #80652f;border-radius:16px;padding:20px}
+label{display:block;margin:18px 0 8px;color:#e5c77d}
+input,select,button{width:100%;padding:13px;border-radius:9px;border:1px solid #555;background:#242424;color:white}
+video{width:100%;margin-top:15px;border-radius:10px}
+button{margin-top:22px;background:#c39b45;color:#111;font-weight:bold;border:0}
+#status{color:#e5c77d;text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+<h1>WEDAI PRO AI</h1>
+<p>Professional Automatic Video Editing Studio</p>
+<div class="panel">
+<label>Upload Your Video</label>
+<input type="file" id="videoInput" accept="video/*">
+<video id="preview" controls hidden></video>
+<label>Choose Editing Style</label>
+<select id="style">
+<option>Wedding Cinematic</option>
+<option>Pre-Wedding</option>
+<option>Birthday</option>
+<option>Instagram Reels</option>
+<option>Travel Cinematic</option>
+</select>
+<label>Upload Music</label>
+<input type="file" id="musicInput" accept="audio/*">
+<button id="startButton">START AI EDITING</button>
+<div id="status">Your editing studio is ready.</div>
+</div>
+<script>
+const videoInput=document.getElementById('videoInput');
+const preview=document.getElementById('preview');
+videoInput.addEventListener('change',function(){
+if(this.files[0]){
+preview.src=URL.createObjectURL(this.files[0]);
+preview.hidden=false;
+}
+});
+document.getElementById('startButton').addEventListener('click',function(){
+const status=document.getElementById('status');
+if(!videoInput.files.length){
+status.textContent='Please upload a video first.';
+return;
+}
+status.textContent='Video selected. AI editing engine is not connected yet.';
+});
+</script>
+</body>
+</html>
