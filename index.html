@@ -6,24 +6,28 @@
 <title>WEDAI PRO AI</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090909;color:#fff;font-family:Arial,sans-serif;padding:22px}
-h1{color:#d9b45b;text-align:center;letter-spacing:2px}
+body{margin:0;background:#090909;color:white;font-family:Arial,sans-serif;padding:20px}
+h1{text-align:center;color:#d9b45b;letter-spacing:2px}
 p{text-align:center;color:#aaa}
 .panel{max-width:520px;margin:25px auto;background:#171717;border:1px solid #80652f;border-radius:16px;padding:20px}
 label{display:block;margin:18px 0 8px;color:#e5c77d}
-input,select,button{width:100%;padding:13px;border-radius:9px;border:1px solid #555;background:#242424;color:white}
-video{width:100%;margin-top:15px;border-radius:10px}
-button{margin-top:22px;background:#c39b45;color:#111;font-weight:bold;border:0}
-#status{color:#e5c77d;text-align:center;margin-top:18px}
+input,select,button{width:100%;padding:14px;border-radius:10px;border:1px solid #555;background:#242424;color:white;font-size:16px}
+video{width:100%;margin-top:15px;border-radius:10px;background:black}
+button{margin-top:20px;background:#c39b45;color:#111;font-weight:bold;border:0}
+#status{text-align:center;color:#e5c77d;margin-top:18px}
 </style>
 </head>
 <body>
+
 <h1>WEDAI PRO AI</h1>
 <p>Professional Automatic Video Editing Studio</p>
+
 <div class="panel">
+
 <label>Upload Your Video</label>
 <input type="file" id="videoInput" accept="video/*">
-<video id="preview" controls hidden></video>
+<video id="preview" controls playsinline hidden></video>
+
 <label>Choose Editing Style</label>
 <select id="style">
 <option>Wedding Cinematic</option>
@@ -32,28 +36,92 @@ button{margin-top:22px;background:#c39b45;color:#111;font-weight:bold;border:0}
 <option>Instagram Reels</option>
 <option>Travel Cinematic</option>
 </select>
-<label>Upload Music</label>
+
+<label>Upload Your Music</label>
 <input type="file" id="musicInput" accept="audio/*">
-<button id="startButton">START AI EDITING</button>
-<div id="status">Your editing studio is ready.</div>
+
+<label>Original Video Voice</label>
+<select id="voice">
+<option value="mute">Remove Original Voice</option>
+<option value="keep">Keep Original Voice</option>
+</select>
+
+<label>Music Volume</label>
+<input type="range" id="musicVolume" min="0" max="100" value="100">
+
+<button id="playButton">PLAY VIDEO WITH MUSIC</button>
+<button id="stopButton">STOP</button>
+
+<div id="status">Upload your video and music.</div>
 </div>
+
 <script>
 const videoInput=document.getElementById('videoInput');
+const musicInput=document.getElementById('musicInput');
 const preview=document.getElementById('preview');
-videoInput.addEventListener('change',function(){
-if(this.files[0]){
-preview.src=URL.createObjectURL(this.files[0]);
-preview.hidden=false;
-}
-});
-document.getElementById('startButton').addEventListener('click',function(){
+const voice=document.getElementById('voice');
+const volume=document.getElementById('musicVolume');
 const status=document.getElementById('status');
-if(!videoInput.files.length){
-status.textContent='Please upload a video first.';
-return;
-}
-status.textContent='Video selected. AI editing engine is not connected yet.';
+
+let music=new Audio();
+music.loop=false;
+
+videoInput.addEventListener('change',()=>{
+ if(videoInput.files.length){
+  preview.src=URL.createObjectURL(videoInput.files[0]);
+  preview.hidden=false;
+  status.textContent='Video uploaded successfully.';
+ }
+});
+
+musicInput.addEventListener('change',()=>{
+ if(musicInput.files.length){
+  music.src=URL.createObjectURL(musicInput.files[0]);
+  status.textContent='Music uploaded successfully.';
+ }
+});
+
+voice.addEventListener('change',()=>{
+ preview.muted=(voice.value==='mute');
+});
+
+volume.addEventListener('input',()=>{
+ music.volume=Number(volume.value)/100;
+});
+
+document.getElementById('playButton').addEventListener('click',async()=>{
+ if(!videoInput.files.length){
+  status.textContent='Please upload a video first.';
+  return;
+ }
+ if(!musicInput.files.length){
+  status.textContent='Please upload music first.';
+  return;
+ }
+
+ preview.muted=(voice.value==='mute');
+ music.volume=Number(volume.value)/100;
+ music.currentTime=0;
+
+ try{
+  await preview.play();
+  await music.play();
+  status.textContent='Video and music are playing together.';
+ }catch(error){
+  status.textContent='Playback failed. Please press Play again.';
+ }
+});
+
+document.getElementById('stopButton').addEventListener('click',()=>{
+ preview.pause();
+ music.pause();
+ status.textContent='Playback stopped.';
+});
+
+preview.addEventListener('ended',()=>{
+ music.pause();
 });
 </script>
+
 </body>
 </html>
